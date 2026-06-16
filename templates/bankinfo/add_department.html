@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}添加部门{% endblock %}
+{% block nav_bank %}active{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display:flex; align-items:center; justify-content:space-between;">
+  <div>
+    <div class="page-title">添加组织部门</div>
+    <div class="page-subtitle">隶属于银行机构内部的部门科室设置</div>
+  </div>
+  <a href="javascript:history.back()" class="bbtn">
+    <i class="ti ti-arrow-left"></i> 返回
+  </a>
+</div>
+
+<div class="bcard" style="max-width:560px;">
+  <div class="bcard-header">
+    <i class="ti ti-git-branch" style="color:#534AB7;" aria-hidden="true"></i>
+    <span class="bcard-header-title">部门信息配置</span>
+  </div>
+  <div class="bcard-body">
+    <form method="post">
+      {% csrf_token %}
+      <div class="bform-group">
+        <label for="department_id" class="bform-label">部门ID <span style="color:red;">*</span></label>
+        <input type="text" class="bform-control" id="department_id" name="department_id" placeholder="例如: SM001" required>
+        <div class="bform-hint">格式规则：银行前缀(2字母) + 3位数字，如 SM001</div>
+      </div>
+      <div class="bform-group">
+        <label for="department_name" class="bform-label">部门名称 <span style="color:red;">*</span></label>
+        <input type="text" class="bform-control" id="department_name" name="department_name" placeholder="例如: 总行、财务部、信贷部" required>
+      </div>
+      <div class="bform-group">
+        <label for="department_type" class="bform-label">部门类型 <span style="color:red;">*</span></label>
+        <input type="text" class="bform-control" id="department_type" name="department_type" placeholder="例如: 管理部门、业务部门、支持部门" required>
+      </div>
+      <div style="margin-top:16px;">
+        <button type="submit" class="bbtn bbtn-primary">
+          <i class="ti ti-check"></i> 建立新部门
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

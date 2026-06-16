@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}确认删除员工{% endblock %}
+{% block nav_bank %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-title" style="color:#dc3545;">人事档案高危操作</div>
+  <div class="page-subtitle">您正在尝试从银行系统中永久注销一名在职职员的全部档案</div>
+</div>
+
+<div class="bcard" style="max-width:550px; border-top: 4px solid #dc3545;">
+  <div class="bcard-header">
+    <i class="ti ti-alert-triangle" style="color:#dc3545;" aria-hidden="true"></i>
+    <span class="bcard-header-title" style="color:#dc3545;">离职与注销安全验证</span>
+  </div>
+  <div class="bcard-body">
+    <div style="background-color: #fff5f5; border-left: 4px solid #ff8787; padding: 12px 16px; border-radius: 4px; margin-bottom: 20px;">
+      <p style="font-size:14px; color:#c92a2a; margin: 0; line-height:1.6; font-weight: 500;">
+        ⚠️ 警告：此操作不可逆！
+      </p>
+      <p style="font-size:13px; color:#e03131; margin: 4px 0 0 0; line-height:1.5;">
+        执行后该员工的身份信息、联系电话、入职履历等基础人事档案将从当前部门下彻底抹除。
+      </p>
+    </div>
+
+    <table class="btable" style="margin-bottom: 20px; border: 1px solid #dee2e6; font-size: 14px;">
+      <tr style="background: #f8f9fa;"><th style="width: 30%;">所属银行</th><td>{{ bank_name }}</td></tr>
+      <tr><th>所属部门 ID</th><td><code>{{ department_id }}</code></td></tr>
+      <tr style="background: #f8f9fa;"><th>员工唯一 ID</th><td><code>{{ employee_id }}</code></td></tr>
+    </table>
+
+    <form action="{% url 'banksystem:delete_employee' bank_name=bank_name department_id=department_id employee_id=employee_id %}" method="post">
+      {% csrf_token %}
+      <div style="display:flex; gap:10px; justify-content: flex-start; margin-top: 24px;">
+        <button type="submit" class="bbtn bbtn-danger">
+          <i class="ti ti-user-minus"></i> 确认执意注销
+        </button>
+        <a href="{% url 'banksystem:employee_list' bank_name=bank_name department_id=department_id %}" class="bbtn" style="background:#f0f1f2; color:#495057;">
+          取消并返回
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

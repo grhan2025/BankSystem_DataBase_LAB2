@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}查询客户信息{% endblock %}
+{% block nav_client %}active{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display:flex; align-items:center; justify-content:space-between;">
+    <div>
+        <div class="page-title">查询客户信息</div>
+        <div class="page-subtitle">支持针对客户ID、身份证、姓名、电话及紧急联系人的多维模糊筛选</div>
+    </div>
+    <a href="{% url 'banksystem:client' %}" class="bbtn">
+        <i class="ti ti-arrow-left"></i> 返回列表
+    </a>
+</div>
+
+<div class="bcard" style="max-width:680px; margin-bottom: 24px;">
+    <div class="bcard-header">
+        <i class="ti ti-search" style="color:#534AB7;" aria-hidden="true"></i>
+        <span class="bcard-header-title">组合条件检索条件</span>
+    </div>
+    <div class="bcard-body">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="bform-group">
+                    <label class="bform-label" for="client_id">客户ID</label>
+                    <input type="text" class="bform-control" id="client_id" name="client_id" value="{{ query_params.client_id|default:'' }}">
+                </div>
+                <div class="bform-group">
+                    <label class="bform-label" for="client_id_card">身份证号</label>
+                    <input type="text" class="bform-control" id="client_id_card" name="client_id_card" value="{{ query_params.client_id_card|default:'' }}">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="bform-group">
+                    <label class="bform-label" for="client_name">客户姓名</label>
+                    <input type="text" class="bform-control" id="client_name" name="client_name" value="{{ query_params.client_name|default:'' }}">
+                </div>
+                <div class="bform-group">
+                    <label class="bform-label" for="client_phone">联系电话</label>
+                    <input type="text" class="bform-control" id="client_phone" name="client_phone" value="{{ query_params.client_phone|default:'' }}">
+                </div>
+            </div>
+
+            <div class="bform-group">
+                <label class="bform-label" for="contact_name">联系人姓名</label>
+                <input type="text" class="bform-control" id="contact_name" name="contact_name" value="{{ query_params.contact_name|default:'' }}">
+            </div>
+
+            <button type="submit" class="bbtn bbtn-primary" style="margin-top:8px;">
+                <i class="ti ti-search"></i> 执行精确筛选
+            </button>
+        </form>
+    </div>
+</div>
+
+{% if has_searched %}
+<div class="bcard">
+    <div class="bcard-header">
+        <i class="ti ti-list" style="color:#0F6E56;" aria-hidden="true"></i>
+        <span class="bcard-header-title">命中检索结果列表</span>
+    </div>
+    <div class="bcard-body" style="padding:0;">
+        {% if results %}
+            <table class="btable">
+                <thead>
+                    <tr>
+                        <th>客户ID</th>
+                        <th>身份证</th>
+                        <th>姓名</th>
+                        <th>性别</th>
+                        <th>地址</th>
+                        <th>电话</th>
+                        <th>电子邮件</th>
+                        <th>联系人</th>
+                        <th>联系人电话</th>
+                        <th>关系</th>
+                        <th style="text-align:center;">详情</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for client in results %}
+                        <tr>
+                            <td>{{ client.0 }}</td>
+                            <td>{{ client.1 }}</td>
+                            <td><strong>{{ client.2 }}</strong></td>
+                            <td>{% if client.3 == 'M' %}男{% else %}女{% endif %}</td>
+                            <td>{{ client.4 }}</td>
+                            <td>{{ client.5 }}</td>
+                            <td>{{ client.6|default:"--" }}</td>
+                            <td>{{ client.7 }}</td>
+                            <td>{{ client.8 }}</td>
+                            <td>{{ client.10 }}</td>
+                            <td style="text-align:center;">
+                                <a href="{% url 'banksystem:detail_client' client_id=client.0 %}" class="bbtn bbtn-primary" style="padding:2px 8px; font-size:12px;">
+                                    查看
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div style="text-align:center; color:#999; padding:40px;">
+                <i class="ti ti-zoom-cancel" style="font-size:32px; display:block; margin-bottom:8px;"></i>
+                未找到匹配对应筛选条件的客户，请核对后重试。
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

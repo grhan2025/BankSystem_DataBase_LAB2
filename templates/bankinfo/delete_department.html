@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}确认删除部门{% endblock %}
+{% block nav_bank %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-title" style="color:#dc3545;">高危动作确认</div>
+  <div class="page-subtitle">您正在尝试从数据库中彻底抹除一个机构部门</div>
+</div>
+
+<div class="bcard" style="max-width:500px; border-top: 4px solid #dc3545;">
+  <div class="bcard-header">
+    <i class="ti ti-alert-triangle" style="color:#dc3545;" aria-hidden="true"></i>
+    <span class="bcard-header-title" style="color:#dc3545;">安全验证确认</span>
+  </div>
+  <div class="bcard-body">
+    <p style="font-size:14px; color:#495057; line-height:1.6;">
+      ⚠️ <strong>您确定要执行删除这个部门的操作吗？</strong><br>
+      该动作是不可逆转的，删除可能会影响到该部门下绑定的所有在职员工状态流转。
+    </p>
+    <form action="{% url 'banksystem:delete_department' department_id=department_id %}" method="post" style="margin-top:20px;">
+      {% csrf_token %}
+      <div style="display:flex; gap:10px;">
+        <button type="submit" class="bbtn bbtn-danger">
+          <i class="ti ti-trash"></i> 确认执意删除
+        </button>
+        <a href="{% url 'banksystem:bank_info' bank_name=request.GET.get('bank_name') %}" class="bbtn" style="background:#f0f1f2; color:#495057;">
+          取消并返回
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

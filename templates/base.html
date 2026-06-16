@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Bank Management System{% endblock %}</title>
+  <link href="https://cdn.staticfile.net/twitter-bootstrap/5.1.1/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.staticfile.net/twitter-bootstrap/5.1.1/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f7f7f5;
+      --bg-tertiary: #f0efeb;
+      --text: #1a1a1a;
+      --text-secondary: #5c5c5c;
+      --text-tertiary: #999;
+      --border: rgba(0,0,0,0.08);
+      --border-md: rgba(0,0,0,0.14);
+      --sidebar-width: 220px;
+      --accent: #534AB7;
+      --accent-bg: #EEEDFE;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg-secondary);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: var(--sidebar-width);
+      min-height: 100vh;
+      background: var(--bg);
+      border-right: 0.5px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0;
+      z-index: 100;
+    }
+
+    .sidebar-brand {
+      padding: 20px 18px 16px;
+      border-bottom: 0.5px solid var(--border);
+    }
+    .sidebar-brand-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .sidebar-brand-sub {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      margin-top: 2px;
+    }
+
+    .sidebar-nav {
+      padding: 10px 0;
+      flex: 1;
+    }
+
+    .nav-link-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 18px;
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-left: 2px solid transparent;
+      transition: all 0.12s;
+    }
+    .nav-link-item:hover {
+      background: var(--bg-secondary);
+      color: var(--text);
+    }
+    .nav-link-item.active {
+      background: var(--bg-secondary);
+      color: var(--accent);
+      font-weight: 500;
+      border-left-color: var(--accent);
+    }
+    .nav-link-item i { font-size: 16px; opacity: 0.8; }
+
+    .sidebar-user {
+      padding: 14px 18px;
+      border-top: 0.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .user-avatar {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: var(--accent-bg);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 600;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
+    .user-info { flex: 1; min-width: 0; }
+    .user-name {
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .signout-link {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      text-decoration: none;
+    }
+    .signout-link:hover { color: #c0392b; }
+
+    /* ── Main content ── */
+    .main-content {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      min-height: 100vh;
+      padding: 32px 36px;
+    }
+
+    .page-header { margin-bottom: 24px; }
+    .page-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .page-subtitle {
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+
+    /* ── Card ── */
+    .bcard {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .bcard-header {
+      padding: 14px 20px;
+      border-bottom: 0.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .bcard-header-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+    }
+    .bcard-body { padding: 20px; }
+
+    /* ── Table ── */
+    .btable { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    .btable th {
+      text-align: left;
+      padding: 10px 16px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-tertiary);
+      background: var(--bg-secondary);
+      border-bottom: 0.5px solid var(--border);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .btable td {
+      padding: 11px 16px;
+      border-bottom: 0.5px solid var(--border);
+      color: var(--text);
+    }
+    .btable tr:last-child td { border-bottom: none; }
+    .btable tr:hover td { background: var(--bg-secondary); }
+
+    /* ── Form elements ── */
+    .bform-label {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 5px;
+    }
+    .bform-control {
+      width: 100%;
+      padding: 8px 12px;
+      font-size: 13.5px;
+      border: 0.5px solid var(--border-md);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.12s;
+    }
+    .bform-control:focus { border-color: var(--accent); }
+    .bform-control[readonly] { background: var(--bg-secondary); color: var(--text-tertiary); }
+    .bform-hint { font-size: 11px; color: var(--text-tertiary); margin-top: 4px; }
+    .bform-group { margin-bottom: 16px; }
+
+    /* ── Buttons ── */
+    .bbtn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: 8px;
+      border: 0.5px solid var(--border-md);
+      background: var(--bg);
+      color: var(--text);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.12s;
+    }
+    .bbtn:hover { background: var(--bg-secondary); }
+    .bbtn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .bbtn-primary:hover { background: #3C3489; color: #fff; }
+    .bbtn-danger { background: #fff; color: #c0392b; border-color: rgba(192,57,43,0.3); }
+    .bbtn-danger:hover { background: #FCEBEB; }
+    .bbtn-warning { background: #fff; color: #854F0B; border-color: rgba(133,79,11,0.3); }
+    .bbtn-warning:hover { background: #FAEEDA; }
+
+    /* ── Alerts ── */
+    .balert {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .balert-success { background: #EAF3DE; color: #3B6D11; border: 0.5px solid #C0DD97; }
+    .balert-error { background: #FCEBEB; color: #A32D2D; border: 0.5px solid #F7C1C1; }
+
+    /* ── Module cards (index page) ── */
+    .module-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .module-card {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      text-decoration: none;
+      display: block;
+      transition: all 0.15s;
+    }
+    .module-card:hover { border-color: var(--border-md); box-shadow: 0 2px 8px rgba(0,0,0,0.06); transform: translateY(-1px); }
+    .module-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+    .module-name { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+    .module-desc { font-size: 12.5px; color: var(--text-tertiary); line-height: 1.6; }
+    .module-go { font-size: 12px; color: var(--accent); margin-top: 12px; display: flex; align-items: center; gap: 4px; }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-brand-title">Bank Management</div>
+    <div class="sidebar-brand-sub">银行管理系统</div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a href="/index" class="nav-link-item {% block nav_home %}{% endblock %}">
+      <i class="ti ti-home" aria-hidden="true"></i> 首页
+    </a>
+    <a href="/banksystem/bankinfo" class="nav-link-item {% block nav_bank %}{% endblock %}">
+      <i class="ti ti-building-bank" aria-hidden="true"></i> 银行信息管理
+    </a>
+    <a href="/banksystem/account" class="nav-link-item {% block nav_account %}{% endblock %}">
+      <i class="ti ti-credit-card" aria-hidden="true"></i> 账户管理
+    </a>
+    <a href="/banksystem/loan" class="nav-link-item {% block nav_loan %}{% endblock %}">
+      <i class="ti ti-receipt" aria-hidden="true"></i> 贷款管理
+    </a>
+    <a href="/banksystem/client" class="nav-link-item {% block nav_client %}{% endblock %}">
+      <i class="ti ti-users" aria-hidden="true"></i> 客户管理
+    </a>
+  </nav>
+
+  <div class="sidebar-user">
+    <div class="user-avatar">{{ request.session.username|slice:":2" }}</div>
+    <div class="user-info">
+      <div class="user-name">{{ request.session.username }}</div>
+      <a href="/signout/" class="signout-link">退出登录</a>
+    </div>
+  </div>
+</aside>
+
+<main class="main-content">
+  {% if messages %}
+    {% for message in messages %}
+      <div class="balert {% if message.tags == 'error' %}balert-error{% else %}balert-success{% endif %}">
+        <i class="ti {% if message.tags == 'error' %}ti-alert-circle{% else %}ti-circle-check{% endif %}"></i>
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  {% block content %}{% endblock %}
+</main>
+
+</body>
+</html>

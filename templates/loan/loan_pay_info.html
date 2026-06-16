@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}放贷还款对账流水{% endblock %}
+{% block nav_loan %}active{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 24px;">
+    <div>
+        <div class="page-title" style="font-size: 24px; font-weight: 600; color: #1e293b;">还款历史明细</div>
+        <div class="page-subtitle" style="font-size: 14px; color: #64748b; margin-top: 4px;">用于追溯单笔信贷契约的全部资金回笼记录</div>
+    </div>
+    <a href="{% url 'banksystem:loan' %}" class="bbtn">
+        <i class="ti ti-arrow-left"></i> 返回
+    </a>
+</div>
+
+<div class="bcard">
+    <div class="bcard-header">
+        <i class="ti ti-history" style="color: #0f6e56;"></i>
+        <span class="bcard-header-title">资金流水账目清算表</span>
+    </div>
+    <div class="bcard-body" style="padding: 0;">
+        {% if loan_pay_info %}
+        <table class="btable" style="margin-bottom: 0;">
+            <thead>
+                <tr>
+                    <th>清算流水ID</th>
+                    <th>还款到账金额</th>
+                    <th>清算结算日期</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in loan_pay_info %}
+                <tr>
+                    <td><span style="font-family: monospace; color:#64748b;">{{ item.0 }}</span></td>
+                    <td><span style="font-weight: 600; color: #0f6e56;">¥ {{ item.1|floatformat:2 }}</span></td>
+                    <td>{{ item.2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div style="text-align: center; color: #94a3b8; padding: 48px 24px;">
+            <i class="ti ti-receipt-off" style="font-size: 36px; display: block; margin-bottom: 8px; color: #cbd5e1;"></i>
+            该笔贷款至今尚未录入任何还款对账明细。
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

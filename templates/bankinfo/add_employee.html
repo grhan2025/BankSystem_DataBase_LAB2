@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}添加员工{% endblock %}
+{% block nav_bank %}active{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display:flex; align-items:center; justify-content:space-between;">
+  <div>
+    <div class="page-title">职员入职录入</div>
+    <div class="page-subtitle">录入新入职或调任人员的基础档案</div>
+  </div>
+  <a href="javascript:history.back()" class="bbtn">
+    <i class="ti ti-arrow-left"></i> 返回
+  </a>
+</div>
+
+<div class="bcard" style="max-width:600px;">
+  <div class="bcard-header">
+    <i class="ti ti-user-plus" style="color:#534AB7;" aria-hidden="true"></i>
+    <span class="bcard-header-title">职员基本人事档案</span>
+  </div>
+  <div class="bcard-body">
+    <form method="post">
+      {% csrf_token %}
+      
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="bform-group">
+          <label for="employee_id" class="bform-label">员工ID <span style="color:red;">*</span></label>
+          <input type="text" class="bform-control" id="employee_id" name="employee_id" placeholder="留空自动生成" value="{{ employee_id|default:suggested_id }}">
+          <div class="bform-hint">格式：E + 3位数字，如 E001（留空自动生成）</div>
+        </div>
+        <div class="bform-group">
+          <label for="employee_name" class="bform-label">真实姓名 <span style="color:red;">*</span></label>
+          <input type="text" class="bform-control" id="employee_name" name="employee_name" placeholder="姓名" value="{{ employee_name }}" required>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="bform-group">
+          <label for="id_card" class="bform-label">身份证号 <span style="color:red;">*</span></label>
+          <input type="text" class="bform-control" id="id_card" name="id_card" placeholder="18位大陆公民身份证" value="{{ id_card }}" required>
+        </div>
+        <div class="bform-group">
+            <label for="sex" class="bform-label">性别 <span style="color:red;">*</span></label>
+            <select class="bform-control" id="sex" name="sex" required>
+                <option value="男" {% if sex == "男" %}selected{% endif %}>男</option>
+                <option value="女" {% if sex == "女" %}selected{% endif %}>女</option>
+            </select>
+        </div>
+      </div>
+
+      <div class="bform-group">
+        <label for="phone" class="bform-label">联系电话 <span style="color:red;">*</span></label>
+        <input type="tel" class="bform-control" id="phone" name="phone" placeholder="请输入11位完整手机号" value="{{ phone }}" required>
+      </div>
+
+      <div class="bform-group">
+        <label for="address" class="bform-label">现居住地址 <span style="color:red;">*</span></label>
+        <input type="text" class="bform-control" id="address" name="address" placeholder="常住联系地址" value="{{ address }}" required>
+      </div>
+
+      <div class="bform-group">
+        <label for="start_work_date" class="bform-label">合同入职日期 <span style="color:red;">*</span></label>
+        <input type="date" class="bform-control" id="start_work_date" name="start_work_date" value="{{ start_work_date }}" required>
+      </div>
+
+      <div style="margin-top:16px;">
+        <button type="submit" class="bbtn bbtn-primary">
+          <i class="ti ti-check"></i> 登记办理入职
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

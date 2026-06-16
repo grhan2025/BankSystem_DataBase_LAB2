@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}创建新放贷头寸{% endblock %}
+{% block nav_loan %}active{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 24px;">
+    <div>
+        <div class="page-title" style="font-size: 24px; font-weight: 600; color: #1e293b;">开设新贷款账户</div>
+        <div class="page-subtitle" style="font-size: 14px; color: #64748b; margin-top: 4px;">向系统内的特定活跃用户档案核准并发放信贷头寸</div>
+    </div>
+    <a href="{% url 'banksystem:loan' %}" class="bbtn">
+        <i class="ti ti-arrow-left"></i> 返回
+    </a>
+</div>
+
+<div class="bcard" style="max-width: 640px;">
+    <div class="bcard-header">
+        <i class="ti ti-plus" style="color: #534AB7;"></i>
+        <span class="bcard-header-title">新开贷款风控要素录入</span>
+    </div>
+    <div class="bcard-body">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="bform-group">
+                    <label for="loan_id" class="bform-label">新放贷款编号 <span class="text-danger">*</span></label>
+                    <input type="text" class="bform-control" id="loan_id" name="loan_id" value="{{ loan_id|default:suggested_id }}" placeholder="留空自动生成">
+                    <div class="bform-hint">格式：L + 3位数字，如 L001（留空自动生成）</div>
+                </div>
+                <div class="bform-group">
+                    <label for="client_id" class="bform-label">借款客户 <span class="text-danger">*</span></label>
+                    <select class="bform-control" id="client_id" name="client_id" required>
+                        <option value="">请选择客户</option>
+                        {% for c in clients %}
+                            <option value="{{ c.0 }}" {% if client_id == c.0 %}selected{% endif %}>{{ c.0 }} — {{ c.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="bform-group" style="margin-top: 12px;">
+                <label for="bank_name" class="bform-label">承销/出资银行分支机构 <span class="text-danger">*</span></label>
+                <select class="bform-control" id="bank_name" name="bank_name" required>
+                    <option value="">请选择银行</option>
+                    {% for bank in banks %}
+                        <option value="{{ bank.0 }}" {% if bank_name == bank.0 %}selected{% endif %}>{{ bank.0 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 12px;">
+                <div class="bform-group">
+                    <label for="loan_money" class="bform-label">核准放贷金额 (¥) <span class="text-danger">*</span></label>
+                    <input type="number" step="0.01" class="bform-control" id="loan_money" name="loan_money" value="{{ loan_money|default:0 }}" required>
+                </div>
+                <div class="bform-group">
+                    <label for="loan_rate" class="bform-label">核定年化利率 (%) <span class="text-danger">*</span></label>
+                    <input type="number" step="0.0001" class="bform-control" id="loan_rate" name="loan_rate" value="{{ loan_rate|default:'4.3500' }}" required>
+                    <div class="bform-hint">年化百分比，例 4.35 表示 4.35%</div>
+                </div>
+            </div>
+
+            <div class="bform-group" style="margin-top: 12px;">
+                <label for="loan_date" class="bform-label">头寸划转/起息日期 <span class="text-danger">*</span></label>
+                <input type="date" class="bform-control" id="loan_date" name="loan_date" value="{{ loan_date|default:'' }}" required>
+            </div>
+
+            <div style="margin-top: 24px;">
+                <button type="submit" class="bbtn bbtn-primary" style="padding: 8px 24px;"><i class="ti ti-check"></i> 批准放款并登账</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// 将所有信用账户数据内嵌到页面（由 view 传入）
+const creditAccountsData = {{ credit_accounts_json|safe }};
+
+const clientSel = document.getElementById('client_id');
+const bankSel = document.getElementById('bank_name');
+
+function updateCreditAccounts() {
+    const cid = clientSel.value;
+    const bname = bankSel.value;
+
+    // 如果容器不存在则不操作
+    const container = document.getElementById('credit_account_section');
+    if (!container) return;
+
+    if (!cid || !bname) {
+        container.innerHTML = '<div class="bform-hint" style="color:#94a3b8;">请先选择客户和银行，以筛选可关联的信用账户</div>';
+        return;
+    }
+
+    const filtered = creditAccountsData.filter(a => a.client_id === cid && a.bank_name === bname);
+
+    if (filtered.length === 0) {
+        container.innerHTML = '<div class="bform-hint" style="color:#e67e22;">该客户在所选银行下暂无信用账户，需要先创建账户</div>';
+        return;
+    }
+
+    let html = '<label class="bform-label">关联信用账户</label><select class="bform-control" name="credit_account_ref" id="credit_account_ref"><option value="">— 不关联 —</option>';
+    filtered.forEach(a => {
+        html += `<option value="${a.account_id}">${a.account_id}｜余额 ¥${parseFloat(a.balance).toFixed(2)}｜可用剩余额度 ¥${parseFloat(a.overdraft).toFixed(2)}</option>`;
+    });
+    html += '</select><div class="bform-hint">请选择信用账户</div>';
+    container.innerHTML = html;
+}
+
+clientSel.addEventListener('change', updateCreditAccounts);
+bankSel.addEventListener('change', updateCreditAccounts);
+
+// 页面加载后插入容器并立即触发一次（回显时用）
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const dateGroup = document.getElementById('loan_date').closest('.bform-group');
+    const div = document.createElement('div');
+    div.className = 'bform-group';
+    div.style.marginTop = '12px';
+    div.id = 'credit_account_section';
+    div.innerHTML = '<div class="bform-hint" style="color:#94a3b8;">请先选择客户和银行，以筛选可关联的信用账户</div>';
+    dateGroup.insertAdjacentElement('afterend', div);
+    updateCreditAccounts();
+});
+</script>
+{% endblock %}

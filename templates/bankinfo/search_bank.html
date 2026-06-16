@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}查询银行信息{% endblock %}
+{% block nav_bank %}active{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display:flex; align-items:center; justify-content:space-between;">
+  <div>
+    <div class="page-title">检索分行机构</div>
+    <div class="page-subtitle">按名称或地域组合筛选指定银行网点</div>
+  </div>
+  <a href="{% url 'banksystem:bankinfo' %}" class="bbtn">
+    <i class="ti ti-arrow-left"></i> 返回列表
+  </a>
+</div>
+
+<div class="bcard" style="max-width:560px; margin-bottom:24px;">
+  <div class="bcard-header">
+    <i class="ti ti-search" style="color:#534AB7;" aria-hidden="true"></i>
+    <span class="bcard-header-title">设置筛选检索项</span>
+  </div>
+  <div class="bcard-body">
+    <form method="post">
+      {% csrf_token %}
+      <div class="bform-group">
+        <label for="bank_name" class="bform-label">银行机构名称</label>
+        <input type="text" class="bform-control" id="bank_name" name="bank_name" placeholder="请输入银行名称关键字模糊匹配">
+      </div>
+      <button type="submit" class="bbtn bbtn-primary">
+        <i class="ti ti-search"></i> 启动匹配查询
+      </button>
+    </form>
+  </div>
+</div>
+
+<div class="bcard">
+  <div class="bcard-header">
+    <i class="ti ti-database-search" style="color:#495057;" aria-hidden="true"></i>
+    <span class="bcard-header-title">检索命中结果 {% if results %}(共找到 {{ results|length }} 个符合条件的网点){% endif %}</span>
+  </div>
+  <div class="bcard-body" style="padding:0;">
+    {% if results %}
+    <table class="btable">
+      <thead>
+        <tr>
+          <th>银行名称</th>
+          <th>所在位置</th>
+          <th>资产规摸</th>
+          <th>现场影像</th>
+          <th style="text-align:center;">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for bank in results %}
+        <tr>
+          <td style="font-weight:500;">{{ bank.0 }}</td>
+          <td>{{ bank.1 }}</td>
+          <td style="color:#28a745; font-weight:500;">¥{{ bank.2 }}</td>
+          <td>
+            {% if bank.3 %}
+              <img src="{{ bank.3 }}" alt="银行图像" style="max-width: 60px; border-radius:4px;">
+            {% else %}
+              <span style="color:#999; font-size:12px;">暂无图片</span>
+            {% endif %}
+          </td>
+          <td style="text-align:center;">
+            <div style="display:inline-flex; gap:6px;">
+              <a href="{% url 'banksystem:bank_info' bank_name=bank.0 %}" class="bbtn bbtn-primary" style="padding:2px 8px; font-size:12px;">进入部门</a>
+              <a href="{% url 'banksystem:update_bank' bank_name=bank.0 %}" class="bbtn bbtn-warning" style="padding:2px 8px; font-size:12px;">编辑</a>
+              <a href="{% url 'banksystem:delete_bank' bank_name=bank.0 %}" class="bbtn bbtn-danger" style="padding:2px 8px; font-size:12px;" onclick="return confirm('确定要删除这个银行吗？')">删除</a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div style="text-align:center; padding:40px; color:#aaa;">
+      <i class="ti ti-zoom-question" style="font-size:32px; display:block; margin-bottom:8px;"></i>
+      暂未执行查询或未命中任何符合条件的机构数据。
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

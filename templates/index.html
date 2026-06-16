@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}首页 — 银行管理系统{% endblock %}
+{% block nav_home %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-title">欢迎回来，{{ request.session.username }}！</div>
+  <div class="page-subtitle">选择一个模块开始管理</div>
+</div>
+
+<div class="module-grid">
+  <a href="/banksystem/bankinfo" class="module-card">
+    <div class="module-icon" style="background:#EEEDFE; color:#534AB7;">
+      <i class="ti ti-building-bank" aria-hidden="true"></i>
+    </div>
+    <div class="module-name">银行信息管理</div>
+    <div class="module-desc">管理所有分行信息，包括分行的创建、信息修改、删除和查找。管理每个分行的部门信息及员工信息。</div>
+    <div class="module-go">前往管理 <i class="ti ti-arrow-right"></i></div>
+  </a>
+
+  <a href="/banksystem/account" class="module-card">
+    <div class="module-icon" style="background:#E1F5EE; color:#0F6E56;">
+      <i class="ti ti-credit-card" aria-hidden="true"></i>
+    </div>
+    <div class="module-name">账户管理</div>
+    <div class="module-desc">账户分为储蓄账户和信用账户，包括不同类型账户的创建、查找、修改、删除。</div>
+    <div class="module-go">前往管理 <i class="ti ti-arrow-right"></i></div>
+  </a>
+
+  <a href="/banksystem/loan" class="module-card">
+    <div class="module-icon" style="background:#FAEEDA; color:#854F0B;">
+      <i class="ti ti-receipt" aria-hidden="true"></i>
+    </div>
+    <div class="module-name">贷款管理</div>
+    <div class="module-desc">包括贷款的创建、查找、修改、删除和还款信息的查看。</div>
+    <div class="module-go">前往管理 <i class="ti ti-arrow-right"></i></div>
+  </a>
+
+  <a href="/banksystem/client" class="module-card">
+    <div class="module-icon" style="background:#FAECE7; color:#993C1D;">
+      <i class="ti ti-users" aria-hidden="true"></i>
+    </div>
+    <div class="module-name">客户管理</div>
+    <div class="module-desc">包括客户的添加、删除、修改和查找。</div>
+    <div class="module-go">前往管理 <i class="ti ti-arrow-right"></i></div>
+  </a>
+</div>
+{% endblock %}

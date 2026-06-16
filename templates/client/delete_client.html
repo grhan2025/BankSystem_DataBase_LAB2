@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}删除客户{% endblock %}
+{% block nav_client %}active{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display:flex; align-items:center; justify-content:space-between;">
+    <div>
+        <div class="page-title">删除客户档案</div>
+        <div class="page-subtitle">通过客户身份证号（ID）执行全局级强制移除操作</div>
+    </div>
+    <a href="{% url 'banksystem:client' %}" class="bbtn">
+        <i class="ti ti-arrow-left"></i> 返回
+    </a>
+</div>
+
+<div class="bcard" style="max-width:520px;">
+    <div class="bcard-header">
+        <i class="ti ti-alert-triangle" style="color:#E11D48;" aria-hidden="true"></i>
+        <span class="bcard-header-title" style="color:#E11D48;">危险操作警告</span>
+    </div>
+    <div class="bcard-body">
+        {% if errors %}
+            <div class="alert alert-danger" style="font-size:14px; padding:10px 14px;">
+                <ul style="margin:0; padding-left:20px;">
+                    {% for field, error in errors.items %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <div style="background:#FFF1F2; color:#9F1239; padding:12px; border-radius:6px; font-size:13px; margin-bottom:16px; line-height:1.5;">
+            ⚠️ <strong>警告：</strong>删除客户将级联清除该用户在系统中关联的<strong>所有银行储蓄账户、信用账户、交易流水以及未结清的贷款记录</strong>！该操作不可逆，请务必核对主键。
+        </div>
+
+        <form method="post" action="{% url 'banksystem:delete_client' %}">
+            {% csrf_token %}
+            <div class="bform-group">
+                <label for="client_id" class="bform-label" style="font-weight:600;">请输入待删除客户的 身份证号/ID</label>
+                <input type="text" class="bform-control" id="client_id" name="client_id" placeholder="例如：34010420001010XXXX" required>
+            </div>
+            
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button type="submit" class="bbtn bbtn-danger" onclick="return confirm('您正在通过表单执行强制销户！确定要移除该客户的一切关联数据吗？')">
+                    确认级联删除
+                </button>
+                <a href="{% url 'banksystem:client' %}" class="bbtn">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

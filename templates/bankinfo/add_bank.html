@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}添加银行{% endblock %}
+{% block nav_bank %}active{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display:flex; align-items:center; justify-content:space-between;">
+  <div>
+    <div class="page-title">添加银行机构</div>
+    <div class="page-subtitle">在系统中注册设立一个新的分行机构</div>
+  </div>
+  <a href="{% url 'banksystem:bankinfo' %}" class="bbtn">
+    <i class="ti ti-arrow-left"></i> 返回
+  </a>
+</div>
+
+<div class="bcard" style="max-width:560px;">
+  <div class="bcard-header">
+    <i class="ti ti-square-plus" style="color:#534AB7;" aria-hidden="true"></i>
+    <span class="bcard-header-title">银行基础数据录入</span>
+  </div>
+  <div class="bcard-body">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="bform-group">
+        <label for="bank_name" class="bform-label">银行名称</label>
+        <input type="text" class="bform-control" id="bank_name" name="bank_name" placeholder="请输入完整机构名称" required>
+      </div>
+      <div class="bform-group">
+        <label for="location" class="bform-label">位置（城市/地址）</label>
+        <input type="text" class="bform-control" id="location" name="location" placeholder="分行地理位置" required>
+      </div>
+      <div class="bform-group">
+        <label for="asset" class="bform-label">固定资产 (¥)</label>
+        <input type="number" step="0.01" class="bform-control" id="asset" name="asset" placeholder="初始核定资产额" required>
+      </div>
+      <div class="bform-group">
+        <label for="image" class="bform-label">机构现场图像</label>
+        <input type="file" class="bform-control" id="image" name="image">
+      </div>
+      <div style="margin-top:16px;">
+        <button type="submit" class="bbtn bbtn-primary">
+          <i class="ti ti-check"></i> 确认添加
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

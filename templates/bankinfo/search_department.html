@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}查询部门信息{% endblock %}
+{% block nav_bank %}active{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display:flex; align-items:center; justify-content:space-between;">
+  <div>
+    <div class="page-title">组合查询部门</div>
+    <div class="page-subtitle">按名称条件筛选特定银行网点内的职责科室部门</div>
+  </div>
+  <a href="javascript:history.back()" class="bbtn">
+    <i class="ti ti-arrow-left"></i> 返回
+  </a>
+</div>
+
+<div class="bcard" style="max-width:560px; margin-bottom:24px;">
+  <div class="bcard-header">
+    <i class="ti ti-search" style="color:#534AB7;" aria-hidden="true"></i>
+    <span class="bcard-header-title">指定筛选条件</span>
+  </div>
+  <div class="bcard-body">
+    <form method="post">
+      {% csrf_token %}
+      <div class="bform-group">
+        <label for="department_name" class="bform-label">部门科室名称</label>
+        <input type="text" class="bform-control" id="department_name" name="department_name" placeholder="请输入部门关键字进行检索">
+      </div>
+      <button type="submit" class="bbtn bbtn-primary">
+        <i class="ti ti-search"></i> 立即查询
+      </button>
+    </form>
+  </div>
+</div>
+
+<div class="bcard">
+  <div class="bcard-header">
+    <i class="ti ti-database" style="color:#495057;" aria-hidden="true"></i>
+    <span class="bcard-header-title">查询结果板块 {% if departments %}(共找到 {{ departments|length }} 个部门){% endif %}</span>
+  </div>
+  <div class="bcard-body" style="padding:0;">
+    {% if departments %}
+    <table class="btable">
+      <thead>
+        <tr>
+          <th>部门ID</th>
+          <th>部门名称</th>
+          <th>部门类型</th>
+          <th style="text-align:center;">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for department in departments %}
+        <tr>
+          <td><code>{{ department.0 }}</code></td>
+          <td style="font-weight:500;">{{ department.1 }}</td>
+          <td>{{ department.2 }}</td>
+          <td style="text-align:center;">
+            <div style="display:inline-flex; gap:6px;">
+              <a href="{% url 'banksystem:update_department' department.3 department.0 %}" class="bbtn bbtn-warning" style="padding:2px 8px; font-size:12px;">编辑</a>
+              <a href="{% url 'banksystem:delete_department' department.3 department.0 %}" class="bbtn bbtn-danger" style="padding:2px 8px; font-size:12px;" onclick="return confirm('确定要删除这个部门吗？')">删除</a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div style="text-align:center; padding:40px; color:#aaa;">
+      <i class="ti ti-zoom-cancel" style="font-size:32px; display:block; margin-bottom:8px;"></i>
+      暂无检索匹配结果，请输入部门名称检索条件。
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

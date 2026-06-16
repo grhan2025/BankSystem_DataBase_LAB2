@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}查询贷款信息{% endblock %}
+{% block nav_loan %}active{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 24px;">
+    <div>
+        <div class="page-title" style="font-size: 24px; font-weight: 600; color: #1e293b;">查询贷款信息</div>
+        <div class="page-subtitle" style="font-size: 14px; color: #64748b; margin-top: 4px;">支持按贷款号、客户号以及银行名称进行复合多条件初筛</div>
+    </div>
+    <a href="{% url 'banksystem:loan' %}" class="bbtn">
+        <i class="ti ti-arrow-left"></i> 返回
+    </a>
+</div>
+
+<div class="bcard" style="max-width:680px; margin-bottom: 24px;">
+    <div class="bcard-header">
+        <i class="ti ti-search" style="color:#534AB7;" aria-hidden="true"></i>
+        <span class="bcard-header-title">条件检索筛选器</span>
+    </div>
+    <div class="bcard-body">
+        <form method="post">
+            {% csrf_token %}
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="bform-group">
+                    <label class="bform-label" for="loan_id">贷款编号</label>
+                    <input type="text" class="bform-control" id=\"loan_id\" name="loan_id" placeholder="例如：L001">
+                </div>
+                <div class="bform-group">
+                    <label class="bform-label" for="client_id">贷款用户ID</label>
+                    <input type="text" class="bform-control" id=\"client_id\" name="client_id" placeholder="例如：C001">
+                </div>
+            </div>
+            <div class="bform-group" style="margin-top: 12px;">
+                <label class="bform-label" for="bank_name">银行名称</label>
+                <input type="text" class="bform-control" id=\"bank_name\" name="bank_name" placeholder="请输入银行机构全称">
+            </div>
+            <div style="margin-top: 20px;">
+                <button type="submit" class="bbtn bbtn-primary" style="padding: 8px 24px;"><i class="ti ti-search"></i> 执行检索</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if results %}
+<div class="bcard">
+    <div class="bcard-header" style="background: #f8fafc;">
+        <span class="bcard-header-title" style="font-size: 14px; color:#475569;">🔍 命中并匹配到的资产结果 (共 {{ results|length }} 条)</span>
+    </div>
+    <div class="bcard-body" style="padding: 0;">
+        <table class="btable" style="margin-bottom: 0;">
+            <thead>
+                <tr>
+                    <th>贷款编号</th>
+                    <th>贷款用户ID</th>
+                    <th>银行名称</th>
+                    <th style="text-align: center; width: 280px;">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for loan in results %}
+                <tr>
+                    <td><span style="font-family: monospace; font-weight: 600;">{{ loan.0 }}</span></td>
+                    <td>{{ loan.1 }}</td>
+                    <td>{{ loan.2 }}</td>
+                    <td style="text-align: center;">
+                        <div style="display: inline-flex; gap: 6px;">
+                            <a href="{% url 'banksystem:view_loan' loan_id=loan.0 %}" class="bbtn bbtn-primary" style="padding: 2px 8px; font-size: 12px;">查看详情</a>
+                            <a href="{% url 'banksystem:loan_payment' loan_id=loan.0 %}" class="bbtn" style="background:#e0f2fe; color:#0369a1; padding: 2px 8px; font-size: 12px;">办理还款</a>
+                            <a href="{% url 'banksystem:loan_pay_info' loan_id=loan.0 %}" class="bbtn" style="background:#f1f5f9; color:#475569; padding: 2px 8px; font-size: 12px;">还款记录</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+    {% if request.method == 'POST' %}
+    <div class=\"alert alert-info mt-4\">🔍 没有找到任何匹配的贷款及契约流水，请核实后重新检索。</div>
+    {% endif %}
+{% endif %}
+{% endblock %}

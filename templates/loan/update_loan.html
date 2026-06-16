@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}修改贷款信息{% endblock %}
+{% block nav_loan %}active{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 24px;">
+    <div>
+        <div class="page-title" style="font-size: 24px; font-weight: 600; color: #1e293b;">修改贷款契约</div>
+        <div class="page-subtitle" style="font-size: 14px; color: #64748b; margin-top: 4px;">更新贷款额度或利率参数</div>
+    </div>
+    <a href="{% url 'banksystem:view_loan' loan.0 %}" class="bbtn">
+        <i class="ti ti-arrow-left"></i> 返回详情
+    </a>
+</div>
+
+<div class="bcard" style="max-width: 600px;">
+    <div class="bcard-header">
+        <i class="ti ti-edit" style="color: #534AB7;"></i>
+        <span class="bcard-header-title">编辑贷款参数 (#{{ loan.0 }})</span>
+    </div>
+    <div class="bcard-body">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="bform-group" style="margin-bottom: 16px;">
+                <label class="bform-label">贷款编号</label>
+                <input type="text" class="bform-control" value="{{ loan.0 }}" readonly style="background: #f1f5f9;">
+            </div>
+
+            <div class="bform-group" style="margin-bottom: 16px;">
+                <label class="bform-label">贷款用户ID</label>
+                <input type="text" class="bform-control" value="{{ loan.1 }}" readonly style="background: #f1f5f9;">
+            </div>
+
+            <div class="bform-group" style="margin-bottom: 16px;">
+                <label class="bform-label">银行名称</label>
+                <input type="text" class="bform-control" value="{{ loan.2 }}" readonly style="background: #f1f5f9;">
+            </div>
+
+            <div class="bform-group" style="margin-bottom: 16px;">
+                <label for="loan_money" class="bform-label">贷款金额 (¥)</label>
+                <input type="number" step="0.01" class="bform-control" id="loan_money" name="loan_money" value="{{ loan.3 }}" required>
+            </div>
+
+            <div class="bform-group" style="margin-bottom: 16px;">
+                <label for="loan_rate" class="bform-label">贷款利率 (%)</label>
+                <input type="number" step="0.0001" class="bform-control" id="loan_rate" name="loan_rate" value="{{ loan.4 }}" required>
+                <div class="bform-hint" style="font-size: 12px; color: #64748b; margin-top: 4px;">年利率，例如 4.35 表示 4.35%</div>
+            </div>
+
+            <div style="margin-top: 24px;">
+                <button type="submit" class="bbtn bbtn-primary" style="padding: 8px 24px;">
+                    <i class="ti ti-check"></i> 保存更新参数
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}添加客户{% endblock %}
+{% block nav_client %}active{% endblock %}
+
+{% block content %}
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show mt-3" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="page-header" style="display:flex; align-items:center; justify-content:space-between;">
+    <div>
+        <div class="page-title">添加客户</div>
+        <div class="page-subtitle">录入全新的银行客户主体及联系人信息</div>
+    </div>
+    <a href="{% url 'banksystem:client' %}" class="bbtn">
+        <i class="ti ti-arrow-left"></i> 返回
+    </a>
+</div>
+
+<div class="bcard" style="max-width:800px;">
+    <div class="bcard-header">
+        <i class="ti ti-user-plus" style="color:#0F6E56;" aria-hidden="true"></i>
+        <span class="bcard-header-title">基本信息与紧急联系人配置</span>
+    </div>
+    <div class="bcard-body">
+        <form method="post">
+            {% csrf_token %}
+            
+            <h5 style="margin-bottom:16px; color:#333; font-weight:600; border-left:3px solid #534AB7; padding-left:8px;">核心身份信息</h5>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="bform-group">
+                    <label class="bform-label">客户ID</label>
+                    <input type="text" class="bform-control" name="client_id" value="{{ client_id|default:suggested_id }}" placeholder="留空自动生成">
+                    <div class="bform-hint">格式：C + 3位数字，如 C001（留空自动生成）</div>
+                </div>
+                <div class="bform-group">
+                    <label class="bform-label"><span style="color:red;">*</span> 客户身份证号</label>
+                    <input type="text" class="bform-control" name="id" value="{{ id }}" required>
+                </div>
+                <div class="bform-group">
+                    <label class="bform-label"><span style="color:red;">*</span> 客户姓名</label>
+                    <input type="text" class="bform-control" name="name" value="{{ name }}" required>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 16px;">
+                <div class="bform-group">
+                    <label class="bform-label"><span style="color:red;">*</span> 性别</label>
+                    <select class="bform-control" name="sex" required>
+                        <option value="男" {% if sex == '男' %}selected{% endif %}>男</option>
+                        <option value="女" {% if sex == '女' %}selected{% endif %}>女</option>
+                    </select>
+                </div>
+                <div class="bform-group">
+                    <label class="bform-label"><span style="color:red;">*</span> 联系电话</label>
+                    <input type="tel" class="bform-control" name="phone" value="{{ phone }}" required>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="bform-group">
+                    <label class="bform-label"><span style="color:red;">*</span> 居住地址</label>
+                    <input type="text" class="bform-control" name="address" value="{{ address }}" required>
+                </div>
+                <div class="bform-group">
+                    <label class="bform-label">电子邮箱</label>
+                    <input type="email" class="bform-control" name="email" value="{{ email }}">
+                    <div class="bform-hint">可选</div>
+                </div>
+            </div>
+
+            <h5 style="margin:24px 0 16px 0; color:#333; font-weight:600; border-left:3px solid #0F6E56; padding-left:8px;">主要联系人信息</h5>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+                <div class="bform-group">
+                    <label class="bform-label"><span style="color:red;">*</span> 联系人姓名</label>
+                    <input type="text" class="bform-control" name="contact_name" value="{{ contact_name }}" required>
+                </div>
+                <div class="bform-group">
+                    <label class="bform-label"><span style="color:red;">*</span> 联系人电话</label>
+                    <input type="tel" class="bform-control" name="contact_phone" value="{{ contact_phone }}" required>
+                </div>
+                <div class="bform-group">
+                    <label class="bform-label"><span style="color:red;">*</span> 与本人关系</label>
+                    <input type="text" class="bform-control" name="contact_relation" value="{{ contact_relation }}" required>
+                    <div class="bform-hint">如：父子、夫妻、朋友等</div>
+                </div>
+            </div>
+
+            <div class="bform-group">
+                <label class="bform-label">联系人邮箱</label>
+                <input type="email" class="bform-control" name="contact_email" value="{{ contact_email }}">
+                <div class="bform-hint">可选</div>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:24px;">
+                <button type="submit" class="bbtn bbtn-primary">确认添加客户</button>
+                <a href="{% url 'banksystem:client' %}" class="bbtn">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

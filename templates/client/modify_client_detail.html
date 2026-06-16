@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}修改客户信息{% endblock %}
+{% block nav_client %}active{% endblock %}
+
+{% block content %}
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show mt-3" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="page-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 24px;">
+    <div>
+        <div class="page-title" style="font-size: 24px; font-weight: 600; color: #1e293b;">修改客户信息</div>
+        <div class="page-subtitle" style="font-size: 14px; color: #64748b; margin-top: 4px;">更新客户 #{{ client.0 }} 的个人核心数据档案</div>
+    </div>
+    <a href="{% url 'banksystem:detail_client' client_id=client.0 %}" class="bbtn">
+        <i class="ti ti-arrow-left"></i> 返回详情
+    </a>
+</div>
+
+<div class="bcard" style="max-width:720px;">
+    <div class="bcard-header">
+        <i class="ti ti-edit" style="color:#534AB7;" aria-hidden="true"></i>
+        <span class="bcard-header-title">编辑客户基本及紧急联系人档案</span>
+    </div>
+    <div class="bcard-body">
+        <form method="post" action="{% url 'banksystem:modify_client' client_id=client.0 %}">
+            {% csrf_token %}
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="bform-group">
+                        <label for="client_id" class="bform-label">客户ID (只读)</label>
+                        <input type="text" class="bform-control" id="client_id" name="client_id" value="{{ client.0 }}" readonly style="background-color: #f1f5f9; color: #64748b;">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="bform-group">
+                        <label for="id_number" class="bform-label">身份证号 (只读)</label>
+                        <input type="text" class="bform-control" id="id_number" name="id_number" value="{{ client.1 }}" readonly style="background-color: #f1f5f9; color: #64748b;">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="bform-group">
+                        <label for="name" class="bform-label">姓名 <span class="text-danger">*</span></label>
+                        <input type="text" class="bform-control" id="name" name="name" value="{{ client.2 }}" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="bform-group">
+                        <label for="sex" class="bform-label">性别 <span class="text-danger">*</span></label>
+                        <select class="bform-control" id="sex" name="sex" required>
+                            <option value="男" {% if client.3 == '男' %}selected{% endif %}>男</option>
+                            <option value="女" {% if client.3 == '女' %}selected{% endif %}>女</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bform-group">
+                <label for="address" class="bform-label">地址 <span class="text-danger">*</span></label>
+                <input type="text" class="bform-control" id="address" name="address" value="{{ client.4 }}" required>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="bform-group">
+                        <label for="phone" class="bform-label">电话 <span class="text-danger">*</span></label>
+                        <input type="tel" class="bform-control" id="phone" name="phone" value="{{ client.5 }}" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="bform-group">
+                        <label for="email" class="bform-label">电子邮件</label>
+                        <input type="email" class="bform-control" id="email" name="email" value="{{ client.6 }}">
+                    </div>
+                </div>
+            </div>
+            
+            <hr style="margin:24px 0; border-color:#e2e8f0;">
+            <h5 class="mb-3" style="color: #1e293b; font-weight: 600;"><i class="ti ti-users"></i> 紧急联系人关联属性</h5>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="bform-group">
+                        <label for="contact_name" class="bform-label">联系人姓名 <span class="text-danger">*</span></label>
+                        <input type="text" class="bform-control" id="contact_name" name="contact_name" value="{{ client.7 }}" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="bform-group">
+                        <label for="contact_relation" class="bform-label">联系人关系 <span class="text-danger">*</span></label>
+                        <input type="text" class="bform-control" id="contact_relation" name="contact_relation" value="{{ client.10 }}" required>
+                        <div class="bform-hint">例如：父子、夫妻等</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="bform-group">
+                        <label for="contact_phone" class="bform-label">联系人电话 <span class="text-danger">*</span></label>
+                        <input type="tel" class="bform-control" id="contact_phone" name="contact_phone" value="{{ client.8 }}" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="bform-group">
+                        <label for="contact_email" class="bform-label">联系人电子邮件</label>
+                        <input type="email" class="bform-control" id="contact_email" name="contact_email" value="{{ client.9 }}">
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top:24px;">
+                <button type="submit" class="bbtn bbtn-primary" style="padding: 8px 20px;"><i class="ti ti-check"></i> 保存资料</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

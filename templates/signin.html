@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>登录 — 银行管理系统</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f7f7f5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .signin-wrap {
+      width: 100%;
+      max-width: 380px;
+      padding: 16px;
+    }
+    .signin-logo {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .signin-logo-icon {
+      width: 48px; height: 48px;
+      background: #EEEDFE;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 12px;
+      font-size: 24px;
+      color: #534AB7;
+    }
+    .signin-logo-title { font-size: 18px; font-weight: 600; color: #1a1a1a; }
+    .signin-logo-sub { font-size: 13px; color: #999; margin-top: 3px; }
+
+    .signin-card {
+      background: #fff;
+      border: 0.5px solid rgba(0,0,0,0.08);
+      border-radius: 14px;
+      padding: 28px 24px;
+    }
+    .form-group { margin-bottom: 14px; }
+    .form-label { display: block; font-size: 12.5px; font-weight: 500; color: #5c5c5c; margin-bottom: 5px; }
+    .form-control {
+      width: 100%;
+      padding: 9px 12px;
+      font-size: 14px;
+      border: 0.5px solid rgba(0,0,0,0.14);
+      border-radius: 8px;
+      background: #fff;
+      color: #1a1a1a;
+      outline: none;
+      transition: border-color 0.12s;
+    }
+    .form-control:focus { border-color: #534AB7; }
+    .btn-signin {
+      width: 100%;
+      padding: 9px;
+      font-size: 14px;
+      font-weight: 500;
+      background: #534AB7;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.12s;
+    }
+    .btn-signin:hover { background: #3C3489; }
+    .error-msg {
+      background: #FCEBEB;
+      color: #A32D2D;
+      border: 0.5px solid #F7C1C1;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+  </style>
+</head>
+<body>
+  <div class="signin-wrap">
+    <div class="signin-logo">
+      <div class="signin-logo-icon"><i class="ti ti-building-bank"></i></div>
+      <div class="signin-logo-title">银行管理系统</div>
+      <div class="signin-logo-sub">Bank Management System</div>
+    </div>
+
+    <div class="signin-card">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="error-msg">
+            <i class="ti ti-alert-circle"></i>{{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <label class="form-label" for="user">用户名</label>
+          <input type="text" class="form-control" id="user" name="user" placeholder="请输入用户名" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password">密码</label>
+          <input type="password" class="form-control" id="password" name="password" placeholder="请输入密码" required>
+        </div>
+        <button type="submit" class="btn-signin">登录</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}修改账户{% endblock %}
+{% block nav_account %}active{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display:flex; align-items:center; justify-content:space-between;">
+  <div>
+    <div class="page-title">修改账户</div>
+    <div class="page-subtitle">账户 #{{ account.0 }}</div>
+  </div>
+  <a href="{% url 'banksystem:view_account' account_id=account.0 account_type=account_type %}" class="bbtn">
+    <i class="ti ti-arrow-left"></i> 返回
+  </a>
+</div>
+
+<div class="bcard" style="max-width:560px;">
+  <div class="bcard-header">
+    <i class="ti ti-edit" style="color:#534AB7;" aria-hidden="true"></i>
+    <span class="bcard-header-title">编辑账户信息</span>
+  </div>
+  <div class="bcard-body">
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="bform-group">
+        <label class="bform-label">账户ID</label>
+        <input type="text" class="bform-control" name="account_id" value="{{ account.0 }}" readonly>
+      </div>
+
+      <div class="bform-group">
+        <label class="bform-label">银行名称</label>
+        <input type="text" class="bform-control" name="bank_name" value="{{ account.1 }}" readonly>
+      </div>
+
+      <div class="bform-group">
+        <label class="bform-label">所有者ID</label>
+        <input type="text" class="bform-control" value="{{ account.2 }}" readonly>
+      </div>
+
+      <div class="bform-group">
+        <label class="bform-label">当前余额</label>
+        <input type="text" class="bform-control" value="{{ account.3 }}" readonly>
+      </div>
+
+      <div class="bform-group">
+        <label class="bform-label">新余额</label>
+        <input type="number" step="any" class="bform-control" name="balance" value="{{ account.3 }}">
+        <div class="bform-hint">直接输入新余额</div>
+      </div>
+
+      <div class="bform-group">
+        <label class="bform-label">开户日期</label>
+        <input type="text" class="bform-control" value="{{ account.4 }}" readonly>
+      </div>
+
+      {% if account_type == "credit" %}
+      <div class="bform-group">
+        <label class="bform-label">透支额度</label>
+        <input type="number" step="any" class="bform-control" name="overdraft" value="{{ account.5 }}">
+      </div>
+      {% else %}
+      <div class="bform-group">
+        <label class="bform-label">利率（%）</label>
+        <input type="number" step="0.0001" class="bform-control" name="rate" value="{{ account.5 }}">
+        <div class="bform-hint">使用步进按钮微调利率</div>
+      </div>
+      {% endif %}
+
+      <div style="display:flex; gap:10px; margin-top:8px;">
+        <button type="submit" class="bbtn bbtn-primary">
+          <i class="ti ti-check"></i> 保存修改
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

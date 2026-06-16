@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}账户详情{% endblock %}
+{% block nav_account %}active{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display:flex; align-items:center; justify-content:space-between;">
+  <div>
+    <div class="page-title">账户详情</div>
+    <div class="page-subtitle">查看账户完整信息</div>
+  </div>
+  <a href="{% url 'banksystem:account' %}" class="bbtn">
+    <i class="ti ti-arrow-left"></i> 返回
+  </a>
+</div>
+
+{% if account %}
+<div class="bcard">
+  <div class="bcard-header">
+    <i class="ti ti-credit-card" style="color:#534AB7;" aria-hidden="true"></i>
+    <span class="bcard-header-title">账户 #{{ account.0 }}</span>
+  </div>
+  <div class="bcard-body" style="padding:0;">
+    <table class="btable">
+      <tr><th>账户ID</th><td>{{ account.0 }}</td></tr>
+      <tr><th>银行名称</th><td>{{ account.1 }}</td></tr>
+      <tr>
+        <th>余额</th>
+        <td style="font-weight:600; color:#059669;">
+            ¥{{ account.2|floatformat:2 }} 
+            {% if account_type == 'saving' %}
+                <small style="color:#64748b; font-weight:normal;">(已包含最新利息)</small>
+            {% endif %}
+        </td>
+      </tr>
+      <tr><th>开户日期</th><td>{{ account.3 }}</td></tr>
+      <tr><th>账户类型</th><td>
+        {% if account_type == 'saving' %}
+          <span style="background:#E1F5EE;color:#0F6E56;padding:2px 8px;border-radius:20px;font-size:12px;">储蓄账户</span>
+        {% else %}
+          <span style="background:#EEEDFE;color:#534AB7;padding:2px 8px;border-radius:20px;font-size:12px;">信用账户</span>
+        {% endif %}
+      </td></tr>
+      <tr>
+        <th>{% if account_type == 'saving' %}利率{% else %}透支额度{% endif %}</th>
+        <td>
+          {% if account_type == 'saving' %}{{ account.5|floatformat:4 }}%（年利率）
+          {% else %}¥{{ account.5|floatformat:2 }}{% endif %}
+        </td>
+      </tr>
+      <tr><th>所有者ID</th><td>{{ account.6 }}</td></tr>
+      <tr><th>所有者姓名</th><td>{{ account.7 }}</td></tr>
+    </table>
+  </div>
+</div>
+
+{% if account_type == 'credit' %}
+<div class="bcard" style="margin-top: 24px;">
+    </div>
+{% endif %}
+
+<div style="display:flex; gap:10px; margin-top:16px;">
+  <a href="{% url 'banksystem:update_account' account_id=account.0 account_type=account_type %}" class="bbtn bbtn-warning">
+    <i class="ti ti-edit"></i> 修改
+  </a>
+  <a href="{% url 'banksystem:delete_account' account_id=account.0 account_type=account_type %}"
+     class="bbtn bbtn-danger"
+     onclick="return confirm('确定要删除这个账户吗？')">
+    <i class="ti ti-trash"></i> 删除
+  </a>
+</div>
+
+{% else %}
+<div class="bcard">
+  <div class="bcard-body" style="text-align:center; color:#999; padding:40px;">
+    <i class="ti ti-mood-sad" style="font-size:32px; display:block; margin-bottom:8px;"></i>
+    未找到账户信息
+  </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}查询账户信息{% endblock %}
+{% block nav_account %}active{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display:flex; align-items:center; justify-content:space-between;">
+    <div>
+        <div class="page-title">查询账户信息</div>
+        <div class="page-subtitle">支持客户、账户、银行等多维度模糊组合条件筛选</div>
+    </div>
+    <a href="{% url 'banksystem:account' %}" class="bbtn">
+        <i class="ti ti-arrow-left"></i> 返回
+    </a>
+</div>
+
+<div class="bcard" style="max-width:680px; margin-bottom: 24px;">
+    <div class="bcard-header">
+        <i class="ti ti-search" style="color:#534AB7;" aria-hidden="true"></i>
+        <span class="bcard-header-title">多条件检索筛选</span>
+    </div>
+    <div class="bcard-body">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="bform-group">
+                    <label class="bform-label" for="client_id">客户ID</label>
+                    <input type="text" class="bform-control" id="client_id" name="client_id" placeholder="输入客户ID">
+                </div>
+                
+                <div class="bform-group">
+                    <label class="bform-label" for="account_id">账户ID</label>
+                    <input type="text" class="bform-control" id="account_id" name="account_id" placeholder="输入账户ID">
+                </div>
+                
+                <div class="bform-group">
+                    <label class="bform-label" for="bank_name">银行名称</label>
+                    <input type="text" class="bform-control" id="bank_name" name="bank_name" placeholder="输入银行名称">
+                </div>
+                
+                <div class="bform-group">
+                    <label class="bform-label" for="name">用户名称</label>
+                    <input type="text" class="bform-control" id="name" name="name" placeholder="输入客户姓名">
+                </div>
+            </div>
+            
+            <div style="margin-top: 8px;">
+                <button type="submit" class="bbtn bbtn-primary">
+                    <i class="ti ti-search"></i> 立即执行查询
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="bcard">
+    <div class="bcard-header">
+        <i class="ti ti-database" style="color:#495057;" aria-hidden="true"></i>
+        <span class="bcard-header-title">检索结果</span>
+    </div>
+    <div class="bcard-body" style="padding:0;">
+        {% if results %}
+            <table class="btable">
+                <thead>
+                    <tr>
+                        <th>账户ID</th>
+                        <th>银行名称</th>
+                        <th>账户类型</th>
+                        <th>客户ID</th>
+                        <th style="text-align:center;">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for account in results %}
+                    <tr>
+                        <td>{{ account.0 }}</td>
+                        <td>{{ account.1 }}</td>
+                        <td>
+                            {% if account.2 == 'saving' %}
+                                <span style="background:#E1F5EE;color:#0F6E56;padding:2px 8px;border-radius:20px;font-size:12px;">储蓄账户</span>
+                            {% else %}
+                                <span style="background:#EEEDFE;color:#534AB7;padding:2px 8px;border-radius:20px;font-size:12px;">信用账户</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ account.3 }}</td>
+                        <td style="text-align:center;">
+                            <a href="{% url 'banksystem:view_account' account_id=account.0 account_type=account.2 %}" class="bbtn bbtn-primary" style="padding:2px 8px; font-size:12px;">
+                                <i class="ti ti-eye"></i> 查看详情
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div style="text-align:center; color:#999; padding:40px;">
+                <i class="ti ti-zoom-cancel" style="font-size:32px; display:block; margin-bottom:8px;"></i>
+                🔍 没有找到符合条件的账户记录，请尝试其他查询条件。
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}贷款详情{% endblock %}
+{% block nav_loan %}active{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 24px;">
+    <div>
+        <div class="page-title" style="font-size: 24px; font-weight: 600; color: #1e293b;">贷款信用资产详情</div>
+        <div class="page-subtitle" style="font-size: 14px; color: #64748b; margin-top: 4px;">查看当前贷款合同的本金、利率和未还余量</div>
+    </div>
+    <a href="{% url 'banksystem:loan' %}" class="bbtn">
+        <i class="ti ti-arrow-left"></i> 返回列表
+    </a>
+</div>
+
+{% if loan %}
+<div class="bcard">
+    <div class="bcard-header">
+        <i class="ti ti-file-text" style="color:#534AB7;" aria-hidden="true"></i>
+        <span class="bcard-header-title">贷款契约扩展属性 (#{{ loan.0 }})</span>
+    </div>
+    <div class="bcard-body" style="padding:0;">
+        <table class="btable" style="margin-bottom:0;">
+            <tr><th style="width:200px;">贷款编号</th><td><span style="font-family: monospace;">{{ loan.0 }}</span></td></tr>
+            <tr><th>贷款用户ID</th><td>{{ loan.1 }}</td></tr>
+            <tr><th>承办银行名称</th><td><span style="font-weight: 500; color: #1e293b;">{{ loan.2 }}</span></td></tr>
+            <tr>
+                <th>贷款初始总额</th>
+                <td><span style="font-size: 16px; font-weight: 600; color: #0f172a;">¥ {{ loan.3|floatformat:2 }}</span></td>
+            </tr>
+            <tr><th>经批贷款年利率</th><td><span class="badge bg-light text-dark">{{ loan.4 }}%</span></td></tr>
+            <tr><th>契约生效日期</th><td>{{ loan.5 }}</td></tr>
+            <tr><th>贷款所有人</th><td><span style="font-weight: 500;">{{ loan.6 }}</span></td></tr>
+            <tr>
+                <th>贷款剩余待还金额</th>
+                <td>
+                    <span style="font-size: 18px; font-weight: 700; color: #ef4444;">¥ {{ loan.7|floatformat:2 }}</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div style="display:flex; gap:10px; margin-top:20px;">
+    <a href="{% url 'banksystem:loan_payment' loan.0 %}" class="bbtn bbtn-primary">
+        <i class="ti ti-coin"></i> 办理还款
+    </a>
+    <a href="{% url 'banksystem:loan_pay_info' loan.0 %}" class="bbtn" style="background:#e0f2fe; color:#0369a1;">
+        <i class="ti ti-history"></i> 查看还款记录
+    </a>
+    <a href="{% url 'banksystem:delete_loan' loan.0 %}" class="bbtn bbtn-danger" onclick="return confirm('确定要删除这笔贷款吗？')">
+        <i class="ti ti-trash"></i> 撤销整笔贷款
+    </a>
+</div>
+{% else %}
+    <div class="alert alert-warning mt-3">未找到该贷款的合同记录。</div>
+{% endif %}
+{% endblock %}

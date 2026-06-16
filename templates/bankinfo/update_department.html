@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}修改部门信息{% endblock %}
+{% block nav_bank %}active{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display:flex; align-items:center; justify-content:space-between;">
+  <div>
+    <div class="page-title">修改部门信息</div>
+    <div class="page-subtitle">归属分行：<strong>{{ bank_name }}</strong> | 部门编号：<code>{{ department_id }}</code></div>
+  </div>
+  <a href="javascript:history.back()" class="bbtn">
+    <i class="ti ti-arrow-left"></i> 返回
+  </a>
+</div>
+
+{% if messages %}
+  {% for message in messages %}
+    {% if message.tags == 'error' %}
+      <div style="padding: 12px 16px; border-radius: 4px; margin-bottom: 20px; background-color: #fff5f5; border-left: 4px solid #ff8787; color: #c92a2a;">
+        {{ message }}
+      </div>
+    {% else %}
+      <div style="padding: 12px 16px; border-radius: 4px; margin-bottom: 20px; background-color: #f4fce3; border-left: 4px solid #94d82d; color: #2b8a3e;">
+        {{ message }}
+      </div>
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+<div class="bcard" style="max-width:560px;">
+  <div class="bcard-header">
+    <i class="ti ti-edit" style="color:#534AB7;" aria-hidden="true"></i>
+    <span class="bcard-header-title">编辑部门科室档案</span>
+  </div>
+  <div class="bcard-body">
+    <form method="post">
+      {% csrf_token %}
+      
+      <div class="bform-group">
+        <label for="department_id" class="bform-label">部门 ID (不可更改)</label>
+        <input type="text" class="bform-control" id="department_id" name="department_id" value="{{ department_id }}" style="background-color: #f1f3f5; color: #6c757d;" readonly>
+        <div class="bform-hint">系统内部标识，无法在线覆盖</div>
+      </div>
+      
+      <div class="bform-group">
+        <label for="department_name" class="bform-label">部门名称</label>
+        <input type="text" class="bform-control" id="department_name" name="department_name" value="{{ department_name }}" placeholder="例如: 信贷部、风险合规部" required>
+      </div>
+      
+      <div class="bform-group">
+        <label for="department_type" class="bform-label">部门职能类型</label>
+        <input type="text" class="bform-control" id="department_type" name="department_type" value="{{ department_type }}" placeholder="例如: 业务部门、管理部门、支持部门" required>
+      </div>
+
+      <div style="margin-top:24px;">
+        <button type="submit" class="bbtn bbtn-primary">
+          <i class="ti ti-device-floppy"></i> 保存修改
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

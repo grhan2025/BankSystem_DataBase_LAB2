@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}创建储蓄账户{% endblock %}
+{% block nav_account %}active{% endblock %}
+
+{% block content %}
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show mt-3" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="page-header" style="display:flex; align-items:center; justify-content:space-between;">
+    <div>
+        <div class="page-title">创建储蓄账户</div>
+        <div class="page-subtitle">录入新的银行储蓄账户信息</div>
+    </div>
+    <a href="{% url 'banksystem:account' %}" class="bbtn">
+        <i class="ti ti-arrow-left"></i> 返回
+    </a>
+</div>
+
+<div class="bcard" style="max-width:560px;">
+    <div class="bcard-header">
+        <i class="ti ti-wallet" style="color:#0F6E56;" aria-hidden="true"></i>
+        <span class="bcard-header-title">储蓄账户详情配置</span>
+    </div>
+    <div class="bcard-body">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="bform-group">
+                <label class="bform-label" for="account_id">账户ID</label>
+                <input type="text" class="bform-control" id="account_id" name="account_id" value="{{ account_id|default:suggested_id }}" placeholder="留空则自动生成">
+                <div class="bform-hint">格式：SA + 3位数字，如：SA001（留空自动生成）</div>
+            </div>
+            
+            <div class="bform-group">
+                <label class="bform-label" for="bank_name">银行名称</label>
+                <select class="bform-control" id="bank_name" name="bank_name" required>
+                    <option value="">请选择银行</option>
+                    {% for bank in banks %}
+                        <option value="{{ bank.0 }}" {% if bank_name == bank.0 %}selected{% endif %}>{{ bank.0 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="bform-group">
+                <label class="bform-label" for="balance">余额</label>
+                <input type="number" step="0.01" class="bform-control" id="balance" name="balance" value="{{ balance|default:0 }}" required>
+            </div>
+            
+            <div class="bform-group">
+                <label class="bform-label" for="open_date">开户日期</label>
+                <input type="date" class="bform-control" id="open_date" name="open_date" value="{{ open_date|default:'' }}" required>
+            </div>
+            
+            <div class="bform-group">
+                <label class="bform-label" for="rate">利率 (%)</label>
+                <input type="number" step="0.0001" class="bform-control" id="rate" name="rate" value="{{ rate|default:0.0350 }}" required>
+                <div class="bform-hint">年利率，例如 0.0350 表示 3.50%</div>
+            </div>
+            
+            <div class="bform-group">
+                <label class="bform-label" for="client_id">选择客户 <span style="color:red;">*</span></label>
+                <select class="bform-control" id="client_id" name="client_id" required>
+                    <option value="">请选择客户</option>
+                    {% for c in clients %}
+                        <option value="{{ c.0 }}" {% if client_id == c.0 %}selected{% endif %}>{{ c.0 }} — {{ c.1 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div style="display:flex; gap:10px; margin-top:16px;">
+                <button type="submit" class="bbtn bbtn-primary">
+                    <i class="ti ti-check"></i> 确认创建
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

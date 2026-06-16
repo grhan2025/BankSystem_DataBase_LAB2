@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}员工档案管理{% endblock %}
+{% block nav_bank %}active{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display:flex; align-items:center; justify-content:space-between;">
+  <div>
+    <div class="page-title">员工信息册</div>
+    <div class="page-subtitle">当前归属于银行 <strong>{{ bank_name }}</strong> 部门 <strong>{{ department_id }}</strong> 的职员列表</div>
+  </div>
+  <div style="display:flex; gap:8px;">
+    <a href="{% url 'banksystem:add_employee' bank_name=bank_name department_id=department_id %}" class="bbtn bbtn-primary">
+      <i class="ti ti-user-plus"></i> 添加新员工
+    </a>
+    <a href="{% url 'banksystem:bank_info' bank_name %}" class="bbtn">
+      <i class="ti ti-arrow-left"></i> 返回部门列表
+    </a>
+  </div>
+</div>
+
+<div class="bcard">
+  <div class="bcard-header">
+    <i class="ti ti-users" style="color:#534AB7;" aria-hidden="true"></i>
+    <span class="bcard-header-title">在职职员清册</span>
+  </div>
+  <div class="bcard-body" style="padding:0;">
+    <table class="btable">
+      <thead>
+        <tr>
+          <th>员工ID</th>
+          <th>部门ID</th>
+          <th>身份证号</th>
+          <th>姓名</th>
+          <th>性别</th>
+          <th>电话</th>
+          <th>居住地址</th>
+          <th>入职时间</th>
+          <th style="text-align:center;">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for employee in employees %}
+        <tr>
+          <td><code>{{ employee.0 }}</code></td>
+          <td>{{ employee.1 }}</td>
+          <td>{{ employee.2 }}</td>
+          <td style="font-weight:500;">{{ employee.3 }}</td>
+          <td>
+            {% if employee.4 == '男' %}
+                <span style="background:#EEEDFE; color:#534AB7; padding:2px 8px; border-radius:20px; font-size:12px;">男</span>
+            {% else %}
+                <span style="background:#FFF0F5; color:#DB2777; padding:2px 8px; border-radius:20px; font-size:12px;">女</span>
+            {% endif %}
+          </td>
+          <td>{{ employee.5 }}</td>
+          <td>{{ employee.6 }}</td>
+          <td>{{ employee.7 }}</td>
+          <td style="text-align:center;">
+            <div style="display:inline-flex; gap:6px;">
+              <a href="{% url 'banksystem:update_employee' bank_name=bank_name department_id=department_id employee_id=employee.0 %}" class="bbtn bbtn-warning" style="padding:2px 8px; font-size:12px;">编辑</a>
+              <a href="{% url 'banksystem:delete_employee' bank_name=bank_name department_id=department_id employee_id=employee.0 %}" class="bbtn bbtn-danger" style="padding:2px 8px; font-size:12px;" onclick="return confirm('确定要删除这个员工吗？')">删除</a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

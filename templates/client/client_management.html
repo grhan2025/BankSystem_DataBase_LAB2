@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% block title %}客户管理{% endblock %}
+{% block nav_client %}active{% endblock %}
+
+{% block content %}
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show mt-3" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="page-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 20px;">
+    <div>
+        <div class="page-title" style="font-size: 24px; font-weight: 600; color: #1e293b;">客户管理</div>
+        <div class="page-subtitle" style="font-size: 14px; color: #64748b; margin-top: 4px;">管理银行系统中的客户基本档案与紧急联系人信息</div>
+    </div>
+    <div style="display:flex; gap:8px;">
+        <a href="/banksystem/add_client" class="bbtn bbtn-primary">
+            <i class="ti ti-plus"></i> 添加用户
+        </a>
+        <a href="/banksystem/search_client" class="bbtn" style="background:#f0f1f2; color:#334155;">
+            <i class="ti ti-search"></i> 查询用户
+        </a> 
+    </div>
+</div>
+
+<div class="bcard">
+    <div class="bcard-body" style="padding:0;">
+        <div id="userTable" class="table-responsive">
+            <table class="btable" style="margin-bottom:0;">
+                <thead>
+                  <tr>
+                    <th>客户ID</th>
+                    <th>姓名</th>
+                    <th>性别</th>
+                    <th>联系电话</th>
+                    <th style="text-align: center; width: 180px;">操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for client in clients %}
+                  <tr>
+                    <td>{{ client.0 }}</td>
+                    <td>
+                        <span style="font-weight: 500; color: #1e293b;">{{ client.2 }}</span>
+                    </td>
+                    <td>
+                        {% if client.3 == '男' %}
+                            <span style="background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:20px; font-size:12px;">男</span>
+                        {% else %}
+                            <span style="background:#fce7f3; color:#b71c1c; padding:2px 8px; border-radius:20px; font-size:12px;">女</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ client.5 }}</td>
+                    <td style="text-align:center;">
+                      <div style="display:inline-flex; gap:6px;">
+                        <a href="{% url 'banksystem:detail_client' client_id=client.0 %}" class="bbtn bbtn-primary" style="padding:2px 8px; font-size:12px;">查看</a>
+                        
+                        <a href="{% url 'banksystem:modify_client' client_id=client.0 %}" class="bbtn bbtn-warning" style="padding:2px 8px; font-size:12px;">编辑</a>
+                        
+                        <a href="{% url 'banksystem:delete_client' client_id=client.0 %}" class="bbtn bbtn-danger" style="padding:2px 8px; font-size:12px;" onclick="return confirm('确定要删除客户 {{ client.2 }} 吗？此操作将同时删除该客户的所有账户和贷款记录！')">删除</a>
+                      </div>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% if page_obj.has_other_pages %}
+<nav aria-label="Page navigation" style="margin-top: 24px; display: flex; justify-content: center;">
+  <ul class="pagination" style="gap: 6px; margin: 0;">
+    
+    {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link custom-page-link" href="?page=1" aria-label="First">
+          <i class="ti ti-chevrons-left"></i>
+        </a>
+      </li>
+      <li class="page-item">
+        <a class="page-link custom-page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+          <i class="ti ti-chevron-left"></i>
+        </a>
+      </li>
+    {% else %}
+      <li class="page-item disabled">
+        <span class="page-link custom-page-link"><i class="ti ti-chevrons-left"></i></span>
+      </li>
+      <li class="page-item disabled">
+        <span class="page-link custom-page-link"><i class="ti ti-chevron-left"></i></span>
+      </li>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}\
+      {% if page_obj.number == num %}
+        <li class="page-item active">
+          <span class="page-link custom-page-link active-page-link">{{ num }}</span>
+        </li>
+      {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+        <li class="page-item">
+          <a class="page-link custom-page-link" href="?page={{ num }}">{{ num }}</a>
+        </li>
+      {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link custom-page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+          <i class="ti ti-chevron-right"></i>
+        </a>
+      </li>
+      <li class="page-item">
+        <a class="page-link custom-page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+          <i class="ti ti-chevrons-right"></i>
+        </a>
+      </li>
+    {% else %}
+      <li class="page-item disabled">
+        <span class="page-link custom-page-link"><i class="ti ti-chevron-right"></i></span>
+      </li>
+      <li class="page-item disabled">
+        <span class="page-link custom-page-link"><i class="ti ti-chevrons-right"></i></span>
+      </li>
+    {% endif %}
+
+  </ul>
+</nav>
+
+<style>
+  /* 基础页码按钮：大圆角、浅灰边界、平滑过渡 */
+  .custom-page-link {
+    color: #475569 !important;
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important; /* 呼应你表格和卡片的圆角 */
+    padding: 8px 14px !important;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  }
+
+  /* 悬浮效果：轻轻浮起，边框变成柔和的绿色调 */
+  .custom-page-link:hover {
+    color: #0F6E56 !important;
+    background-color: #f0fdf4 !important; /* 极浅的绿底 */
+    border-color: #bbf7d0 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  }
+
+  /* 当前激活页码：完美融入系统核心墨绿色 `#0F6E56` */
+  .active-page-link {
+    color: #ffffff !important;
+    background-color: #0F6E56 !important;
+    border-color: #0F6E56 !important;
+    box-shadow: 0 4px 10px rgba(15, 110, 86, 0.25) !important; /* 绿色的渐变呼吸阴影 */
+  }
+
+  /* 禁用状态的按钮样式 */
+  .disabled .custom-page-link {
+    color: #cbd5e1 !important;
+    background-color: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+</style>
+<div class="text-center text-muted mt-2" style="font-size: 13px;">
+  显示第 {{ page_obj.start_index }} - {{ page_obj.end_index }} 条，共 {{ page_obj.paginator.count }} 条记录
+</div>
+{% endif %}
+{% endblock %}

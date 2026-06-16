@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}贷款管理{% endblock %}
+{% block nav_loan %}active{% endblock %}
+
+{% block content %}
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show mt-3" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="page-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 20px;">
+    <div>
+        <div class="page-title" style="font-size: 24px; font-weight: 600; color: #1e293b;">贷款管理</div>
+        <div class="page-subtitle" style="font-size: 14px; color: #64748b; margin-top: 4px;">追踪与审计银行系统内的企业及个人放贷、还款流水</div>
+    </div>
+    <div style="display:flex; gap:8px;">
+        <a href="{% url 'banksystem:add_loan' %}" class="bbtn bbtn-primary">
+            <i class="ti ti-plus"></i> 创建贷款
+        </a>
+        <a href="{% url 'banksystem:search_loan' %}" class="bbtn" style="background:#f0f1f2; color:#334155;">
+            <i class="ti ti-search"></i> 查询贷款
+        </a> 
+    </div>
+</div>
+
+<div class="bcard">
+    <div class="bcard-body" style="padding:0;">
+        <div class="table-responsive">
+            <table class="btable" style="margin-bottom:0;">
+                <thead>
+                  <tr>
+                    <th>贷款编号</th>
+                    <th>贷款用户ID</th>
+                    <th>发放银行</th>
+                    <th style="text-align: center; width: 320px;">流水操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for loan in loans %}
+                  <tr>
+                    <td><span style="font-family: monospace; font-weight: 600; color: #475569;">{{ loan.0 }}</span></td>
+                    <td>{{ loan.1 }}</td>
+                    <td><span style="font-weight: 500; color: #1e293b;">{{ loan.2 }}</span></td>
+                    <td style="text-align:center;">
+                      <div style="display:inline-flex; gap:6px;">
+                        <a href="{% url 'banksystem:view_loan' loan.0 %}" class="bbtn bbtn-primary" style="padding:2px 8px; font-size:12px;">查看详情</a>
+                        <a href="{% url 'banksystem:loan_payment' loan.0 %}" class="bbtn" style="background:#e0f2fe; color:#0369a1; padding:2px 8px; font-size:12px;">还款</a>
+                        <a href="{% url 'banksystem:loan_pay_info' loan.0 %}" class="bbtn" style="background:#f1f5f9; color:#475569; padding:2px 8px; font-size:12px;">记录</a>
+                        <a href="{% url 'banksystem:delete_loan' loan.0 %}" class="bbtn bbtn-danger" style="padding:2px 8px; font-size:12px;" onclick="return confirm('确定要删除这笔贷款吗？')">删除</a>
+                      </div>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% if page_obj.has_other_pages %}
+<nav aria-label="Page navigation" class="mt-4">
+  <ul class="pagination justify-content-center">
+    {% if page_obj.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+    {% endif %}
+    {% for num in page_obj.paginator.page_range %}
+      <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+      </li>
+    {% endfor %}
+    {% if page_obj.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+{% endblock %}

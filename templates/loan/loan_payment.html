@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}贷款还款办理{% endblock %}
+{% block nav_loan %}active{% endblock %}
+
+{% block content %}
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show mt-3" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="page-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+    <div>
+        <div class="page-title" style="font-size: 24px; font-weight: 600; color: #1e293b;">办理贷款还款</div>
+        <div class="page-subtitle" style="font-size: 14px; color: #64748b; margin-top: 4px;">录入单笔账期还款流水，从客户名下账户扣减资金</div>
+    </div>
+    <a href="{% url 'banksystem:loan' %}" class="bbtn">
+        <i class="ti ti-arrow-left"></i> 返回
+    </a>
+</div>
+
+<div class="bcard" style="max-width: 600px;">
+    <div class="bcard-header">
+        <i class="ti ti-coin" style="color: #0f6e56;"></i>
+        <span class="bcard-header-title">还款交易凭证配置</span>
+    </div>
+    <div class="bcard-body">
+        <div style="background-color: #f0fdf4; border-left: 4px solid #16a34a; padding: 16px; margin-bottom: 20px; border-radius: 0 8px 8px 0;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; color: #4b5563;">
+                <div><strong>贷款单号:</strong> {{ loan.loan_id }}</div>
+                <div><strong>客户编号:</strong> {{ loan.client_id }}（{{ loan.client_name }}）</div>
+                <div><strong>发放银行:</strong> {{ loan.bank_name }}</div>
+                <div><strong>原始贷款本金:</strong> ¥{{ loan.loan_money }}</div>
+                <div><strong>贷款利率:</strong> {{ loan.loan_rate|floatformat:4 }}</div>
+                <div><strong>发放日期:</strong> {{ loan.loan_date }}</div>
+            </div>
+            <hr style="margin: 12px 0; border-color: #bbf7d0;">
+            <!-- 利息明细行 -->
+            <div style="display: flex; gap: 24px; font-size: 13px; color: #4b5563; margin-bottom: 10px;">
+                <div>
+                    <strong>累计应计利息:</strong>
+                    <span style="color: #d97706; font-weight: 600;">¥{{ loan.accrued_interest|floatformat:2 }}</span>
+                </div>
+                <div>
+                    <strong>上次结息日期:</strong>
+                    {{ loan.last_interest_date|default:"尚未结息" }}
+                </div>
+            </div>
+            <!-- 待还总额 = 本金 + 利息 - 已还 -->
+            <div style="font-size: 14px; color: #374151;">
+                <strong>当前待还款余额（含利息）:</strong>
+                <span style="font-size: 20px; font-weight: 700; color: #dc2626; margin-left: 6px;">
+                    ¥ {{ remaining|floatformat:2 }}
+                </span>
+            </div>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="bform-group" style="margin-bottom: 16px;">
+                <label for="account_info" class="bform-label">选择扣款账户 <span class="text-danger">*</span></label>
+                <select class="form-select bform-control" id="account_info" name="account_info" required>
+                    <option value="" disabled selected>-- 请选择该客户在此银行下的可用账户 --</option>
+                    {% for acc in available_accounts %}
+                        <option value="{{ acc.0 }},{{ acc.2 }}">
+                            账户: {{ acc.0 }} | 
+                            类型: {% if acc.2 == 'saving' %}储蓄账户{% else %}信用账户{% endif %} | 
+                            当前余额: ¥{{ acc.1|floatformat:2 }}
+                        </option>
+                    {% empty %}
+                        <option value="" disabled>该客户在此银行下暂未开立任何可用账户，请先去开户存款！</option>
+                    {% endfor %}
+                </select>
+                <div class="bform-hint" style="color: #64748b; font-size: 12px; margin-top: 4px;">
+                    💡 系统已自动过滤，仅展示该客户在<b>当前贷款银行</b>开立的合法活期资产账户。
+                </div>
+            </div>
+
+            <div class="bform-group">
+                <label for="pay_money" class="bform-label">本次实选还款金额 (¥) <span class="text-danger">*</span></label>
+                <input type="number" step="0.01" class="bform-control" id="pay_money" name="pay_money" required placeholder="请输入扣款金额">
+                <div class="bform-hint" style="color: #dc2626; font-size: 12px;">※ 注意：录入金额绝对不允许超过上方展示的待还余额。</div>
+            </div>
+            
+            <div class="bform-group" style="margin-top: 16px;">
+                <label for="pay_date" class="bform-label">资金到账清算日期 <span class="text-danger">*</span></label>
+                <input type="date" class="bform-control" id="pay_date" name="pay_date" required>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+                <a href="{% url 'banksystem:loan' %}" class="bbtn" style="background-color: #f1f5f9; color: #475569;">取消</a>
+                <button type="submit" class="bbtn bbtn-primary">
+                    <i class="ti ti-check"></i> 确认扣款并还款
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

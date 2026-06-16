@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}账户管理{% endblock %}
+{% block nav_account %}active{% endblock %}
+
+{% block content %}
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show mt-3" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="page-header" style="display:flex; align-items:center; justify-content:space-between;">
+    <div>
+        <div class="page-title">账户管理</div>
+        <div class="page-subtitle">管理银行系统中的储蓄与信用账户</div>
+    </div>
+    <div style="display:flex; gap:8px;">
+        <a href="{% url 'banksystem:create_saving' %}" class="bbtn bbtn-primary">
+            <i class="ti ti-plus"></i> 创建储蓄账户
+        </a>
+        <a href="{% url 'banksystem:create_credit' %}" class="bbtn" style="background:#EEEDFE; color:#534AB7;">
+            <i class="ti ti-plus"></i> 创建信用账户
+        </a>
+        <a href="{% url 'banksystem:search_account' %}" class="bbtn" style="background:#f0f1f2; color:#495057;">
+            <i class="ti ti-search"></i> 查询账户
+        </a>
+    </div>
+</div>
+
+<div class="bcard">
+    <div class="bcard-header">
+        <i class="ti ti-list" style="color:#534AB7;" aria-hidden="true"></i>
+        <span class="bcard-header-title">账户列表</span>
+    </div>
+    <div class="bcard-body" style="padding:0;">
+        <table class="btable">
+            <thead>
+                <tr>
+                    <th>账户ID</th>
+                    <th>银行名称</th>
+                    <th>账户类型</th>
+                    <th>所有者ID</th>
+                    <th style="text-align:center;">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for account in accounts %}
+                <tr>
+                    <td>{{ account.0 }}</td>
+                    <td>{{ account.1 }}</td>
+                    <td>
+                        {% if account.2 == 'saving' %}
+                            <span style="background:#E1F5EE;color:#0F6E56;padding:2px 8px;border-radius:20px;font-size:12px;">储蓄账户</span>
+                        {% else %}
+                            <span style="background:#EEEDFE;color:#534AB7;padding:2px 8px;border-radius:20px;font-size:12px;">信用账户</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ account.3 }}</td>
+                    <td style="text-align:center;">
+                        <div style="display:inline-flex; gap:6px;">
+                            <a href="{% url 'banksystem:view_account' account_id=account.0 account_type=account.2 %}" class="bbtn bbtn-primary" style="padding:2px 8px; font-size:12px;">查看</a>
+                            <a href="{% url 'banksystem:update_account' account_id=account.0 account_type=account.2 %}" class="bbtn bbtn-warning" style="padding:2px 8px; font-size:12px;">编辑</a>
+                            <a href="{% url 'banksystem:delete_account' account_id=account.0 account_type=account.2 %}" class="bbtn bbtn-danger" style="padding:2px 8px; font-size:12px;" onclick="return confirm('确定要删除这个账户吗？')">删除</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

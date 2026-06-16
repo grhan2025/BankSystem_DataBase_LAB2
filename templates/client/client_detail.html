@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}客户详情{% endblock %}
+{% block nav_client %}active{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 24px;">
+    <div>
+        <div class="page-title" style="font-size: 24px; font-weight: 600; color: #1e293b;">客户档案详情</div>
+        <div class="page-subtitle" style="font-size: 14px; color: #64748b; margin-top: 4px;">查看客户完整的个人核心数据视图</div>
+    </div>
+    <a href="{% url 'banksystem:client' %}" class="bbtn">
+        <i class="ti ti-arrow-left"></i> 返回列表
+    </a>
+</div>
+
+{% if client %}
+<div class="bcard">
+    <div class="bcard-header">
+        <i class="ti ti-user" style="color:#534AB7;" aria-hidden="true"></i>
+        <span class="bcard-header-title">客户实体扩展属性 (#{{ client.0 }})</span>
+    </div>
+    <div class="bcard-body" style="padding:0;">
+        <table class="btable" style="margin-bottom:0;">
+            <tr><th style="width:180px;">客户ID</th><td>{{ client.0 }}</td></tr>
+            <tr><th>身份证</th><td>{{ client.1 }}</td></tr>
+            <tr><th>姓名</th><td><span style="font-weight: 500; color: #1e293b;">{{ client.2 }}</span></td></tr>
+            <tr><th>性别</th><td>
+                {% if client.3 == '男' %}
+                    <span style="background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:20px; font-size:12px;">男</span>
+                {% elif client.3 == '女' %}
+                    <span style="background:#fce7f3; color:#b71c1c; padding:2px 8px; border-radius:20px; font-size:12px;">女</span>
+                {% else %}
+                    <span style="background:#f1f5f9; color:#64748b; padding:2px 8px; border-radius:20px; font-size:12px;">{{ client.3|default:"未知" }}</span>
+                {% endif %}
+            </td></tr>
+            <tr><th>地址</th><td>{{ client.4 }}</td></tr>
+            <tr><th>电话</th><td>{{ client.5 }}</td></tr>
+            <tr><th>电子邮件</th><td>{{ client.6|default:"--" }}</td></tr>
+            <tr style="background-color: #f8fafc;"><th colspan="2" style="font-weight: 600; color: #475569;"><i class="ti ti-users"></i> 紧急联系人关联维</th></tr>
+            <tr><th>联系人姓名</th><td>{{ client.7 }}</td></tr>
+            <tr><th>联系人关系</th><td><span class="badge bg-light text-dark" style="font-size: 12px; font-weight: normal;">{{ client.10 }}</span></td></tr>
+            <tr><th>联系人电话</th><td>{{ client.8 }}</td></tr>
+            <tr><th>联系人电子邮件</th><td>{{ client.9|default:"--" }}</td></tr>
+        </table>
+    </div>
+</div>
+<!-- 在现有的 client_detail.html 页面的修改/删除按钮下方，加入此代码段 -->
+<div class="bcard" style="margin-top: 24px;">
+    <div class="bcard-header">
+        <i class="ti ti-wallet" style="color:#534AB7;" aria-hidden="true"></i>
+        <span class="bcard-header-title">名下关联账户</span>
+    </div>
+    <div class="bcard-body">
+        {% if accounts %}
+        <table class="btable" style="margin-bottom:0;">
+            <thead>
+                <tr>
+                    <th>账户ID</th>
+                    <th>所属银行</th>
+                    <th>账户类型</th>
+                    <th>余额</th>
+                    <th>开户日期</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for acc in accounts %}
+                <tr>
+                    <td>{{ acc.0 }}</td>
+                    <td>{{ acc.1 }}</td>
+                    <td>
+                        {% if acc.5 == 'saving' %}
+                            <span class="badge bg-success">储蓄账户</span>
+                        {% else %}
+                            <span class="badge bg-primary">信用账户</span>
+                        {% endif %}
+                    </td>
+                    <td style="font-weight: 500;">¥{{ acc.2|floatformat:2 }}</td>
+                    <td>{{ acc.3 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <div style="color: #64748b; padding: 12px 0;">该客户暂无关联账户。</div>
+        {% endif %}
+    </div>
+</div>
+<div style="display:flex; gap:10px; margin-top:20px;">
+    <a href="{% url 'banksystem:modify_client' client_id=client.0 %}" class="bbtn bbtn-warning">
+        <i class="ti ti-edit"></i> 修改资料
+    </a>
+    <a href="{% url 'banksystem:delete_client' client_id=client.0 %}" class="bbtn bbtn-danger" onclick="return confirm('确定要删除客户 {{ client.2 }} 吗？此操作将同时删除该客户的所有账户和贷款记录！')">
+        <i class="ti ti-trash"></i> 删除客户
+    </a>
+</div>
+{% else %}
+    <div class="alert alert-warning mt-3">未找到对应客户信息。</div>
+{% endif %}
+{% endblock %}
